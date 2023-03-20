@@ -11,12 +11,6 @@ let renderstreaming;
 /** @type {boolean} */
 let useWebSocket;
 
-const codecPreferences = document.getElementById('codecPreferences');
-const supportsSetCodecPreferences = window.RTCRtpTransceiver &&
-  'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
-const messageDiv = document.getElementById('message');
-messageDiv.style.display = 'none';
-
 const playerDiv = document.getElementById('player');
 const lockMouseCheck = document.getElementById('lockMouseCheck');
 const videoPlayer = new VideoPlayer();
@@ -41,7 +35,6 @@ async function setup() {
   const res = await getServerConfig();
   useWebSocket = res.useWebSocket;
   showWarningIfNeeded(res.startupMode);
-  showCodecSelect();
   showPlayButton();
 }
 
@@ -73,15 +66,12 @@ function onClickPlayButton() {
 }
 
 async function setupRenderStreaming() {
-  codecPreferences.disabled = true;
-
   const signaling = useWebSocket ? new WebSocketSignaling() : new Signaling();
   const config = getRTCConfiguration();
   renderstreaming = new RenderStreaming(signaling, config);
   renderstreaming.onConnect = onConnect;
   renderstreaming.onDisconnect = onDisconnect;
   renderstreaming.onTrackEvent = (data) => videoPlayer.addTrack(data.track);
-  renderstreaming.onGotOffer = setCodecPreferences;
 
   await renderstreaming.start();
   await renderstreaming.createConnection();
@@ -92,62 +82,24 @@ function onConnect() {
   showStatsMessage();
 }
 
-async function onDisconnect(connectionId) {
+async function onDisconnect() {
   clearStatsMessage();
-  messageDiv.style.display = 'block';
-  messageDiv.innerText = `Disconnect peer on ${connectionId}.`;
 
   await renderstreaming.stop();
   renderstreaming = null;
   videoPlayer.deletePlayer();
-  if (supportsSetCodecPreferences) {
-    codecPreferences.disabled = false;
-  }
+  
   showPlayButton();
+  var button = document.getElementById('download');
+  button.hidden = false;
+  button.addEventListener('click', onDownloadButtonClicked);
 }
 
-function setCodecPreferences() {
-  /** @type {RTCRtpCodecCapability[] | null} */
-  let selectedCodecs = null;
-  if (supportsSetCodecPreferences) {
-    const preferredCodec = codecPreferences.options[codecPreferences.selectedIndex];
-    if (preferredCodec.value !== '') {
-      const [mimeType, sdpFmtpLine] = preferredCodec.value.split(' ');
-      const { codecs } = RTCRtpSender.getCapabilities('video');
-      const selectedCodecIndex = codecs.findIndex(c => c.mimeType === mimeType && c.sdpFmtpLine === sdpFmtpLine);
-      const selectCodec = codecs[selectedCodecIndex];
-      selectedCodecs = [selectCodec];
-    }
-  }
-
-  if (selectedCodecs == null) {
-    return;
-  }
-  const transceivers = renderstreaming.getTransceivers().filter(t => t.receiver.track.kind == "video");
-  if (transceivers && transceivers.length > 0) {
-    transceivers.forEach(t => t.setCodecPreferences(selectedCodecs));
-  }
+function onDownloadButtonClicked(){
+  videoPlayer.download();
 }
 
-function showCodecSelect() {
-  if (!supportsSetCodecPreferences) {
-    messageDiv.style.display = 'block';
-    messageDiv.innerHTML = `Current Browser does not support <a href="https://developer.mozilla.org/en-US/docs/Web/API/RTCRtpTransceiver/setCodecPreferences">RTCRtpTransceiver.setCodecPreferences</a>.`;
-    return;
-  }
 
-  const codecs = RTCRtpSender.getCapabilities('video').codecs;
-  codecs.forEach(codec => {
-    if (['video/red', 'video/ulpfec', 'video/rtx'].includes(codec.mimeType)) {
-      return;
-    }
-    const option = document.createElement('option');
-    option.value = (codec.mimeType + ' ' + (codec.sdpFmtpLine || '')).trim();
-    option.innerText = option.value;
-    codecPreferences.appendChild(option);
-  });
-  codecPreferences.disabled = false;
-}
 
 /** @type {RTCStatsReport} */
 let lastStats;
@@ -166,10 +118,7 @@ function showStatsMessage() {
     }
 
     const array = createDisplayStringArray(stats, lastStats);
-    if (array.length) {
-      messageDiv.style.display = 'block';
-      messageDiv.innerHTML = array.join('<br>');
-    }
+    //console.log(array);
     lastStats = stats;
   }, 1000);
 }
@@ -180,6 +129,5 @@ function clearStatsMessage() {
   }
   lastStats = null;
   intervalId = null;
-  messageDiv.style.display = 'none';
-  messageDiv.innerHTML = '';
+ 
 }

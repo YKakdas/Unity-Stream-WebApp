@@ -7,6 +7,8 @@ export class VideoPlayer {
     this.inputRemoting = null;
     this.sender = null;
     this.inputSenderChannel = null;
+    this.mediaRecorder = null;
+    this.recordedData = [];
   }
 
   /**
@@ -32,6 +34,11 @@ export class VideoPlayer {
     this.fullScreenButtonElement.addEventListener("click", this._onClickFullscreenButton.bind(this));
     this.playerElement.appendChild(this.fullScreenButtonElement);
 
+    this.mediaRecorder = new MediaRecorder(this.videoElement.srcObject);
+    this.mediaRecorder.ondataavailable = (event) => {
+      this.recordedData.push(event.data);
+  }
+
     document.addEventListener('webkitfullscreenchange', this._onFullscreenChange.bind(this));
     document.addEventListener('fullscreenchange', this._onFullscreenChange.bind(this));
   }
@@ -39,7 +46,9 @@ export class VideoPlayer {
   _onLoadedVideo() {
     this.videoElement.play();
     this.resizeVideo();
+    this.mediaRecorder.start();
   }
+
 
   _onClickFullscreenButton() {
     if (!document.fullscreenElement || !document.webkitFullscreenElement) {
@@ -130,6 +139,21 @@ export class VideoPlayer {
 
     this.playerElement = null;
     this.lockMouseCheck = null;
+  }
+
+  download() {
+    console.log(this.recordedData);
+    const blob = new Blob(this.recordedData, {
+      type: "video/mp4",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = "test.mp4";
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
 }
