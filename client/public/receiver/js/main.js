@@ -89,7 +89,6 @@ async function setupRenderStreaming() {
 
 function onConnect() {
   const channel = renderstreaming.createDataChannel("input");
-  videoPlayer.setupInput(channel);
   showStatsMessage();
 }
 

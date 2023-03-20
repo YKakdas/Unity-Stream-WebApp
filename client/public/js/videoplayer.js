@@ -1,6 +1,3 @@
-import { Observer, Sender } from "../module/sender.js";
-import { InputRemoting } from "../module/inputremoting.js";
-
 export class VideoPlayer {
   constructor() {
     this.playerElement = null;
@@ -37,7 +34,6 @@ export class VideoPlayer {
 
     document.addEventListener('webkitfullscreenchange', this._onFullscreenChange.bind(this));
     document.addEventListener('fullscreenchange', this._onFullscreenChange.bind(this));
-    this.videoElement.addEventListener("click", this._mouseClick.bind(this), false);
   }
 
   _onLoadedVideo() {
@@ -66,55 +62,10 @@ export class VideoPlayer {
     if (document.webkitFullscreenElement || document.fullscreenElement) {
       this.playerElement.style.position = "absolute";
       this.fullScreenButtonElement.style.display = 'none';
-
-      if (this.lockMouseCheck.checked) {
-        if (document.webkitFullscreenElement.requestPointerLock) {
-          document.webkitFullscreenElement.requestPointerLock();
-        } else if (document.fullscreenElement.requestPointerLock) {
-          document.fullscreenElement.requestPointerLock();
-        } else if (document.mozFullScreenElement.requestPointerLock) {
-          document.mozFullScreenElement.requestPointerLock();
-        }
-
-        // Subscribe to events
-        document.addEventListener('mousemove', this._mouseMove.bind(this), false);
-        document.addEventListener('click', this._mouseClickFullScreen.bind(this), false);
       }
-    }
     else {
       this.playerElement.style.position = "relative";
       this.fullScreenButtonElement.style.display = 'block';
-
-      document.removeEventListener('mousemove', this._mouseMove.bind(this), false);
-      document.removeEventListener('click', this._mouseClickFullScreen.bind(this), false);
-    }
-  }
-
-  _mouseMove(event) {
-    // Forward mouseMove event of fullscreen player directly to sender
-    // This is required, as the regular mousemove event doesn't fire when in fullscreen mode
-    this.sender._onMouseEvent(event);
-  }
-
-  _mouseClick() {
-    // Restores pointer lock when we unfocus the player and click on it again
-    if (this.lockMouseCheck.checked) {
-      if (this.videoElement.requestPointerLock) {
-        this.videoElement.requestPointerLock().catch(function () { });
-      }
-    }
-  }
-
-  _mouseClickFullScreen() {
-    // Restores pointer lock when we unfocus the fullscreen player and click on it again
-    if (this.lockMouseCheck.checked) {
-      if (document.webkitFullscreenElement.requestPointerLock) {
-        document.webkitFullscreenElement.requestPointerLock();
-      } else if (document.fullscreenElement.requestPointerLock) {
-        document.fullscreenElement.requestPointerLock();
-      } else if (document.mozFullScreenElement.requestPointerLock) {
-        document.mozFullScreenElement.requestPointerLock();
-      }
     }
   }
 
@@ -181,33 +132,4 @@ export class VideoPlayer {
     this.lockMouseCheck = null;
   }
 
-  _isTouchDevice() {
-    return (('ontouchstart' in window) ||
-      (navigator.maxTouchPoints > 0) ||
-      (navigator.msMaxTouchPoints > 0));
-  }
-
-  /**
-   * setup datachannel for player input (muouse/keyboard/touch/gamepad)
-   * @param {RTCDataChannel} channel 
-   */
-  setupInput(channel) {
-    this.sender = new Sender(this.videoElement);
-    this.sender.addMouse();
-    this.sender.addKeyboard();
-    if (this._isTouchDevice()) {
-      this.sender.addTouchscreen();
-    }
-    this.sender.addGamepad();
-    this.inputRemoting = new InputRemoting(this.sender);
-
-    this.inputSenderChannel = channel;
-    this.inputSenderChannel.onopen = this._onOpenInputSenderChannel.bind(this);
-    this.inputRemoting.subscribe(new Observer(this.inputSenderChannel));
-  }
-
-  async _onOpenInputSenderChannel() {
-    await new Promise(resolve => setTimeout(resolve, 100));
-    this.inputRemoting.startSending();
-  }
 }
