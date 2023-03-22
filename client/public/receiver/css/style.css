@@ -41,3 +41,45 @@ body {
   width: 32px;
   height: 32px;
 }
+
+#note-container {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+/* Style for the note paragraph */
+.note {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* Style for the timestamp */
+.note-timestamp {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Style for the note textarea and save/edit/delete buttons */
+.note-textarea {
+  flex: 1;
+}
+.note-buttons {
+  margin-left: 10px;
+}
+.note-save {
+  background-color: green;
+  color: white;
+  font-weight: bold;
+}
+.note-edit {
+  background-color: orange;
+  color: white;
+  font-weight: bold;
+}
+.note-delete {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+}

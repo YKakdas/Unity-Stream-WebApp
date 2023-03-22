@@ -6,7 +6,7 @@
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="receiver/css/style.css" />
-  <title>Receiver Sample</title>
+  
 </head>
 
 <body>
@@ -16,9 +16,84 @@
 
     <div id="player"></div>
     
-    <div id="download" hidden="true">
-      <button type="button">Download</button>
-    </div>
+  <div id="download" hidden="true">
+    <button type="button">Download</button>
+  </div>
+
+  <button id="add-note-button">Add Note</button>
+  <div id="note-container"></div>
+  <script>
+    // Get the button and note container elements
+    const addNoteButton = document.getElementById('add-note-button');
+    const noteContainer = document.getElementById('note-container');
+
+    // Add event listener to the button
+    addNoteButton.addEventListener('click', () => {
+      // Get the current video timestamp
+      const timestamp = document.querySelector('video').currentTime;
+      
+      // Create a new text area for the note
+      const noteTextarea = document.createElement('textarea');
+      noteTextarea.placeholder = 'Enter your note here';
+      noteTextarea.classList.add('note-textarea');
+      
+      // Create a new text node for the timestamp
+      const timestampText = document.createTextNode(`[${formatTime(timestamp)}] `);
+      const timestampSpan = document.createElement('span');
+      timestampSpan.classList.add('note-timestamp');
+      timestampSpan.appendChild(timestampText);
+      
+      // Create a new paragraph element to hold the timestamp, note, and buttons
+      const noteParagraph = document.createElement('p');
+      noteParagraph.classList.add('note');
+      noteParagraph.appendChild(timestampSpan);
+      noteParagraph.appendChild(noteTextarea);
+      
+      // Create the save, edit, and delete buttons
+      const saveButton = document.createElement('button');
+      saveButton.textContent = 'Save';
+      saveButton.classList.add('note-buttons', 'note-save');
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.classList.add('note-buttons', 'note-edit');
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.classList.add('note-buttons', 'note-delete');
+
+      // Add event listeners to the buttons
+      saveButton.addEventListener('click', () => {
+        // Save the note
+        noteTextarea.readOnly = true;
+        saveButton.style.display = 'none';
+        editButton.style.display = 'inline-block';
+      });
+      editButton.addEventListener('click', () => {
+        // Edit the note
+        noteTextarea.readOnly = false;
+        editButton.style.display = 'none';
+        saveButton.style.display = 'inline-block';
+      });
+      deleteButton.addEventListener('click', () => {
+        // Delete the note
+        noteParagraph.remove();
+      });
+
+      // Add the buttons to the paragraph element
+      noteParagraph.appendChild(saveButton);
+      noteParagraph.appendChild(editButton);
+      noteParagraph.appendChild(deleteButton);
+      
+      // Add the paragraph element to the note container
+      noteContainer.appendChild(noteParagraph);
+    });
+
+    // Format the time in seconds to a string format of minutes:seconds
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60);
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+  </script>
 
   </div>
 
