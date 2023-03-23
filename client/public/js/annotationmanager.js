@@ -35,12 +35,23 @@ function createTimestampField() {
     return timestampSpan;
 }
 
-function createSaveButton(noteTextarea, saveButton, editButton) {
+function createSaveButton(noteTextarea, saveButton, editButton, noteParagraph) {
     saveButton.textContent = 'Save';
     saveButton.classList.add('note-buttons', 'note-save');
 
     // Add event listeners to the button
     saveButton.addEventListener('click', () => {
+
+        // Check if note is empty
+        if (!noteTextarea.value.trim()) {
+            const confirmDelete = confirm('You haven\'t entered anything for this note. Do you want to delete it?');
+            if (confirmDelete) {
+              noteParagraph.remove();
+              return;
+            }
+            return;
+        }
+
         // Save the note
         noteTextarea.readOnly = true;
         saveButton.style.display = 'none';
@@ -90,7 +101,7 @@ function onAddNoteClicked() {
     const editButton = document.createElement('button');
     const deleteButton = document.createElement('button');
 
-    createSaveButton(noteTextarea, saveButton, editButton);
+    createSaveButton(noteTextarea, saveButton, editButton, noteParagraph);
     createEditButton(noteTextarea, saveButton, editButton);
     createDeleteButton(deleteButton, noteParagraph);
     
