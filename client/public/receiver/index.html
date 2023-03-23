@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Video with markers</title>
+    <link href="//vjs.zencdn.net/7.10.2/video-js.min.css" rel="stylesheet">
+    <link href="css/videojs.markers.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js" defer></script>
+    <script src="//vjs.zencdn.net/7.10.2/video.min.js"></script>
+    <script src='js/videojs-markers.js'></script>
+</head>
+
+<body>
+    <video autoplay="" class="video-js vjs-default-skin" controls="" data-setup='{"width": 640, "height": 360}'
+        height="360" id="example_video_1" preload="auto" width="640" muted>
+        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+    </video>
+
+    <script>
+        var player = videojs('example_video_1');
+        player.markers({
+            markers: [
+                { time: 1.5, text: "this" },
+                { time: 121, text: "is" },
+                { time: 343, text: "so" },
+                { time: 600, text: "cool" }
+            ]
+        });
+    </script>
+
+</body>
+
+</html>

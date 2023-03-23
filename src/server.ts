@@ -24,8 +24,20 @@ export const createServer = (config: Options): express.Application => {
   app.use('/signaling', signaling);
   app.use(express.static(path.join(__dirname, '../client/public')));
   app.use('/module', express.static(path.join(__dirname, '../client/src')));
+  app.use('/saved', express.static(path.join(__dirname, '../client/public/receiver')));
   app.get('/', (req, res) => {
     const indexPagePath: string = path.join(__dirname, '../client/public/index.html');
+    fs.access(indexPagePath, (err) => {
+      if (err) {
+        log(LogLevel.warn, `Can't find file ' ${indexPagePath}`);
+        res.status(404).send(`Can't find file ${indexPagePath}`);
+      } else {
+        res.sendFile(indexPagePath);
+      }
+    });
+  });
+  app.get('/saved', (req, res) => {
+    const indexPagePath: string = path.join(__dirname, '../client/public/receiver/index.html');
     fs.access(indexPagePath, (err) => {
       if (err) {
         log(LogLevel.warn, `Can't find file ' ${indexPagePath}`);
