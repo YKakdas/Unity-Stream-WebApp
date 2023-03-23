@@ -15,6 +15,12 @@ function createAnnotationUI() {
     document.getElementById('log').addEventListener('click', function(){
             console.log(notes);
     });
+
+    window.addEventListener('beforeunload', (event) => {
+        const jsonNotes = JSON.stringify(notes);
+        event.returnValue = jsonNotes;
+        console.log(jsonNotes);
+      });
 }
 
 function createTextArea() {
@@ -66,7 +72,7 @@ function createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, t
         if (index !== -1) {
           notes.splice(index, 1);
         }
-        
+
         const note = {
             timestamp: timestamp,
             note: noteTextarea.value
