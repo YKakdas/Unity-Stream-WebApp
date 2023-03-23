@@ -1,8 +1,8 @@
-import { getServerConfig, getRTCConfiguration } from "../../js/config.js";
-import { createDisplayStringArray } from "../../js/stats.js";
-import { VideoPlayer } from "../../js/videoplayer.js";
-import { RenderStreaming } from "../../module/renderstreaming.js";
-import { Signaling, WebSocketSignaling } from "../../module/signaling.js";
+import { getServerConfig, getRTCConfiguration } from "../../shared/js/config.js";
+import { createDisplayStringArray } from "../../shared/js/stats.js";
+import { VideoPlayer } from "../../shared/js/videoplayer.js";
+import { RenderStreaming } from "../../../module/renderstreaming.js";
+import { Signaling, WebSocketSignaling } from "../../../module/signaling.js";
 
 /** @type {Element} */
 let playButton;
@@ -50,7 +50,7 @@ function showPlayButton() {
   if (!document.getElementById('playButton')) {
     const elementPlayButton = document.createElement('img');
     elementPlayButton.id = 'playButton';
-    elementPlayButton.src = '../../images/Play.png';
+    elementPlayButton.src = '../shared/images/Play.png';
     elementPlayButton.alt = 'Start Streaming';
     playButton = document.getElementById('player').appendChild(elementPlayButton);
     playButton.addEventListener('click', onClickPlayButton);

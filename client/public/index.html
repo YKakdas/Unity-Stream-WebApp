@@ -1,36 +1,22 @@
-<!DOCTYPE HTML>
-<html>
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="receiver/css/style.css" />
-  
+  <link rel="icon" href="stream/shared/images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="stream/shared/css/style.css" />
+  <title>Medical Twitch Homepage</title>
 </head>
 
 <body>
-
   <div id="container">
-    <h1>Medical Twitch</h1>
+    <h1>Medical Twitch Homepage</h1>
 
-    <div id="player"></div>
-    
-  <div id="download" hidden="true">
-    <button type="button">Download</button>
-  </div>
+    <section>
+      <h2 id="live"><a href="stream/live/index.html">Live Streaming From Unity</a></h2>
+      <p>This is a sample for receiving live video / audio from Unity.</p>
+    </section>
 
-  <button id="add-note-button">Add Note</button>
-  <button id="log">Log</button>
-  <div id="note-container"></div>
-  
-  <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-  <script src="https://unpkg.com/event-target@latest/min.js"></script>
-  <script src="https://unpkg.com/resize-observer-polyfill@1.5.0/dist/ResizeObserver.global.js"></script>
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=IntersectionObserver"></script>
-  <script type="module" src="receiver/js/main.js"></script>
-  <script type="module" src="js/annotationmanager.js"></script>
+    <section>
+      <h2 id="saved"><a href="stream/saved/index.html">Saved Video Sample</a></h2>
+      <p>This is a sample for showing recorded and saved stream.</p>
+    </section>
 
 </body>
-
-</html>
