@@ -7,22 +7,60 @@ createAnnotationUI();
 
 
 function createAnnotationUI() {
+    var path = location.pathname;
+    switch (true) {
+        case path.includes('live'):
+            showDynamicUI();
+            break;
+        case path.includes('saved'):
+            showStaticUI();
+            break;
+    }
+}
+
+function showStaticUI() {
+    noteContainer = document.getElementById('note-container');
+    notes = JSON.parse(localStorage.getItem("notes"));
+
+    notes.sort(function (a, b) {
+        var value1 = a.timestamp;
+        var value2 = b.timestamp;
+        if (value1 < value2) return -1;
+        if (value1 > value2) return 1;
+        return 0;
+    });
+
+    var count = 0;
+    notes.forEach(element => {
+        const noteParagraph = document.createElement('p');
+        const noteTextarea = createTextArea();
+
+        noteParagraph.classList.add('note');
+        noteParagraph.id = `note-${count}`;
+        noteParagraph.appendChild(createTimestampField(element.timestamp));
+
+        noteTextarea.readOnly = true;
+        noteTextarea.textContent = element.note;
+        noteParagraph.appendChild(noteTextarea);
+        noteContainer.appendChild(noteParagraph);
+        count++;
+    });
+}
+
+function showDynamicUI() {
+    localStorage.clear();
     addNoteButton = document.getElementById('add-note-button');
+    addNoteButton.hidden = false;
+
     noteContainer = document.getElementById('note-container');
 
     addNoteButton.addEventListener('click', onAddNoteClicked.bind(this));
 
-    document.getElementById('log').addEventListener('click', function(){
-            console.log(notes);
+    document.getElementById('log').addEventListener('click', function () {
+        console.log(notes);
     });
 
-    window.addEventListener('beforeunload', (event) => {
-        const jsonNotes = JSON.stringify(notes);
-        event.returnValue = jsonNotes;
-        console.log(jsonNotes);
-      });
 }
-
 function createTextArea() {
     // Create a new text area for the note
     var noteTextArea = document.createElement('textarea');
@@ -57,8 +95,8 @@ function createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, t
         if (!noteTextarea.value.trim()) {
             const confirmDelete = confirm('You haven\'t entered anything for this note. Do you want to delete it?');
             if (confirmDelete) {
-              noteParagraph.remove();
-              return;
+                noteParagraph.remove();
+                return;
             }
             return;
         }
@@ -70,14 +108,14 @@ function createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, t
 
         const index = notes.findIndex(n => n.timestamp === timestamp);
         if (index !== -1) {
-          notes.splice(index, 1);
+            notes.splice(index, 1);
         }
 
         const note = {
             timestamp: timestamp,
             note: noteTextarea.value
-          };
-          notes.push(note);
+        };
+        updateStoredNotes(note, true);
     });
 
     return saveButton;
@@ -107,8 +145,9 @@ function createDeleteButton(deleteButton, noteParagraph, timestamp) {
 
         const index = notes.findIndex(n => n.timestamp === timestamp);
         if (index !== -1) {
-          notes.splice(index, 1);
+            notes.splice(index, 1);
         }
+        updateStoredNotes(null, false);
     });
 
 }
@@ -121,6 +160,7 @@ function onAddNoteClicked() {
     const timestamp = getTimestamp();
 
     noteParagraph.classList.add('note');
+    noteParagraph.id = `note-${timestamp}`;
     noteParagraph.appendChild(createTimestampField(timestamp));
     noteParagraph.appendChild(noteTextarea);
 
@@ -132,7 +172,7 @@ function onAddNoteClicked() {
     createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, timestamp);
     createEditButton(noteTextarea, saveButton, editButton);
     createDeleteButton(deleteButton, noteParagraph, timestamp);
-    
+
     // Add the buttons to the paragraph element
     noteParagraph.appendChild(saveButton);
     noteParagraph.appendChild(editButton);
@@ -147,4 +187,14 @@ function formatTime(time) {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+function updateStoredNotes(note, push) {
+    if (push) {
+        notes.push(note);
+    }
+
+    //TODO should be handled with database, temporary solution to keep notes for testing purposes till db is done
+    const jsonNotes = JSON.stringify(notes);
+    localStorage.setItem('notes', jsonNotes);
 }
