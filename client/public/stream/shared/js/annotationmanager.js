@@ -32,8 +32,17 @@ function showStaticUI() {
 
     var count = 0;
     notes.forEach(element => {
+        const innerNoteContainer = document.createElement("div");
+        innerNoteContainer.classList.add("innerNoteContainer");
+
         const noteParagraph = document.createElement('p');
         const noteTextarea = createTextArea();
+
+        noteTextarea.addEventListener('click', function(){
+            var player = videojs('example_video_1');
+            player.currentTime(element.timestamp);
+            document.getElementById('video-container').scrollIntoView({ behavior: 'smooth' });
+        });
 
         noteParagraph.classList.add('note');
         noteParagraph.id = `note-${count}`;
@@ -42,7 +51,9 @@ function showStaticUI() {
         noteTextarea.readOnly = true;
         noteTextarea.textContent = element.note;
         noteParagraph.appendChild(noteTextarea);
-        noteContainer.appendChild(noteParagraph);
+        innerNoteContainer.appendChild(noteParagraph);
+        noteContainer.appendChild(innerNoteContainer);
+      
         count++;
     });
 }
@@ -197,4 +208,8 @@ function updateStoredNotes(note, push) {
     //TODO should be handled with database, temporary solution to keep notes for testing purposes till db is done
     const jsonNotes = JSON.stringify(notes);
     localStorage.setItem('notes', jsonNotes);
+}
+
+export function getNotes(){
+    return notes;
 }

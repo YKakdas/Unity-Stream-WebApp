@@ -10,26 +10,18 @@
     <script src="//vjs.zencdn.net/7.10.2/video.min.js"></script>
     <script src='js/videojs-markers.js'></script>
     <script type="module" src="../shared/js/annotationmanager.js"></script>
+    <script type="module" src="js/marker-manager.js"></script>
 </head>
 
 <body>
-    <video autoplay="" class="video-js vjs-default-skin" controls="" data-setup='{"width": 640, "height": 360}'
-        height="360" id="example_video_1" preload="auto" width="640" muted>
-        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-    </video>
-
+    <div id="video-container">
+        <video autoplay="" class="video-js vjs-default-skin" controls="" data-setup='{"width": 1000, "height": 800}'
+            height="360" id="example_video_1" preload="auto" width="640" muted>
+            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                type="video/mp4" />
+        </video>
+    </div>
     <div id="note-container"></div>
-    <script>
-        var player = videojs('example_video_1');
-        player.markers({
-            markers: [
-                { time: 1.5, text: "this" },
-                { time: 121, text: "is" },
-                { time: 343, text: "so" },
-                { time: 600, text: "cool" }
-            ]
-        });
-    </script>
 
 </body>
 
