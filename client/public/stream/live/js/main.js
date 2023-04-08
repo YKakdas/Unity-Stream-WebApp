@@ -55,6 +55,7 @@ function showPlayButton() {
     playButton = document.getElementById('player').appendChild(elementPlayButton);
     playButton.addEventListener('click', onClickPlayButton);
   }
+  api_test();
 }
 
 function onClickPlayButton() {
@@ -129,5 +130,10 @@ function clearStatsMessage() {
   }
   lastStats = null;
   intervalId = null;
- 
+}
+
+async function api_test(){
+    const response = await fetch('http://127.0.0.1:5001/unitystreamingapp/us-central1/web_getAllUsers');
+    const myJson = await response.json();
+    console.log(myJson);
 }
