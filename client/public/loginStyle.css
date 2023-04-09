@@ -1,0 +1,131 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #5372f0;
+
+}
+
+.wrapper {
+    background: #fff;
+    width: 380px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 40px 30px 50px 30px;
+}
+
+.wrapper header {
+    font-size: 35px;
+    font-weight: 600;
+}
+
+.wrapper form {
+    margin: 40px 0;
+}
+
+form .field {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+form .field.shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% {
+        margin-left: 0;
+    }
+
+    20%, 80% {
+        margin-left: -12px;
+    }
+
+    40%, 60% {
+        margin-left: 12px;
+    }
+}
+
+form .field .input-area {
+    position: relative;
+}
+
+form input {
+    height: 50px;
+    width: 100%;
+    border: 1px solid #bfbfbf;
+    border-radius: 5px;
+    padding: 0 45px;
+    font-size: 18px;
+    border-bottom-width: 2px;
+    outline: none;
+}
+
+form .field.error input {
+    border-color: #dc3545;
+}
+
+form input::placeholder {
+    color: #bfbfbf;
+    font-size: 17px;
+}
+
+form .field i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+form .field .icon {
+    left: 15px;
+    color: #bfbfbf;
+}
+
+form .field .error-icon {
+    right: 15px;
+    color: #dc3545;
+}
+
+form .field .error-text {
+    margin-top: 5px;
+    color: #dc3545;
+    text-align: left;
+}
+
+form .field .error {
+    display: none;
+}
+
+form .field.error .error {
+    display: block;
+}
+
+form .pass-link {
+    text-align: left;
+    margin-top: -10px;
+}
+
+.wrapper a {
+    color: 5372f0;
+    text-decoration: none;
+}
+
+.wrapper a:hover {
+    text-decoration: underline;
+}
+
+form input[type="submit"] {
+    margin-top: 30px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    background: #5372f0;
+    transition: background 0.2s ease;
+}
+
+input[type="submit"]:hover {
+    background: #2c52ed;
+}
