@@ -31,7 +31,7 @@ form.onsubmit = (e) => {
     if (!eInput.value.match(pattern)) { //if the pattern doesn't match
       eField.classList.add("error");
       let errorTxt = eField.querySelector(".error-text");
-      (eInput.value != "") ? errorTxt.innerText = "Enter a valid email address": errorTxt.innerText = "Email can't be blank";
+      (eInput.value != "") ? errorTxt.innerText = "Enter a valid email address" : errorTxt.innerText = "Email can't be blank";
     } else {
       eField.classList.remove("error");
     }
@@ -53,22 +53,46 @@ form.onsubmit = (e) => {
 }
 
 async function loginToServer(email, password) {
+  password = await hash(password);
   var data = {
-      "email": email,
-      "password": password
+    "email": email,
+    "password": password
   }
 
-  const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_updateUserUUIDLogin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow", 
-    referrerPolicy: "no-referrer",
-    body: JSON.stringify(data),
-  });
-  console.log(response.status);
-  if(response.status == "200"){
-    response.json().then(body => document.cookie = "uuid=" + body.uuid +  "; expires=Tue, 5 Sep 2023 12:00:00 UTC; path=/");
+  try {
+    const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_updateUserUUIDLogin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(data),
+    });
+    if (response.status == "200") {
+      response.json().then(body => document.cookie = "uuid=" + body.uuid + "; expires=Tue, 5 Sep 2023 12:00:00 UTC; path=/");
+      window.location.href = "http://localhost/index.html";
+    } else {
+      alert("Something went wrong! Please try again.");
+    }
+  } catch (error) {
+    alert("Something went wrong! Please try again.");
   }
+
+}
+
+
+async function hash(message) {
+  // encode as UTF-8
+  const msgBuffer = new TextEncoder().encode(message);
+
+  // hash the message
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+  // convert ArrayBuffer to Array
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+  // convert bytes to hex string                  
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
 }

@@ -98,27 +98,51 @@ form.onsubmit = (e) => {
     ) {
         window.location.href = "#"; //# is where you want to submit the form data
         console.log("Form submitted");
-        postUserToDB(roleField.value -1, nameInput.value, emailInput.value, createPasswordInput.value);
+        postUserToDB(roleField.value - 1, nameInput.value, emailInput.value, createPasswordInput.value);
     }
 }
 
 async function postUserToDB(role, name, email, password) {
+    password = await hash(password);
     var data = {
-        "role" : role,
+        "role": role,
         "name": name,
         "email": email,
         "password": password
     }
 
-    const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      redirect: "follow", 
-      referrerPolicy: "no-referrer",
-      body: JSON.stringify(data),
-    });
-    console.log(response.status);
-  }
-  
+    try {
+        const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postUser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data),
+        });
+        if (response.status == "200") {
+            window.location.href = "http://localhost/login/Login.html";
+        } else {
+            alert("Something went wrong! Please try again.");
+        }
+    } catch (error) {
+        alert("Something went wrong! Please try again.");
+    }
+
+}
+
+async function hash(message) {
+    // encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);
+
+    // hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+    // convert bytes to hex string                  
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+}
