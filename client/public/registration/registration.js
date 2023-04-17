@@ -11,6 +11,8 @@ createPasswordInput = createPasswordField.querySelector("input");
 confirmPasswordField = form.querySelector(".confirm_password");
 confirmPasswordInput = confirmPasswordField.querySelector("input");
 
+roleField = document.getElementById("role");
+
 form.onsubmit = (e) => {
     e.preventDefault(); //Prevent the form from submitting
 
@@ -96,5 +98,27 @@ form.onsubmit = (e) => {
     ) {
         window.location.href = "#"; //# is where you want to submit the form data
         console.log("Form submitted");
+        postUserToDB(roleField.value -1, nameInput.value, emailInput.value, createPasswordInput.value);
     }
 }
+
+async function postUserToDB(role, name, email, password) {
+    var data = {
+        "role" : 0,
+        "name": name,
+        "email": email,
+        "password": password
+    }
+
+    const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", 
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(data),
+    });
+    console.log(response.status);
+  }
+  
