@@ -104,7 +104,7 @@ form.onsubmit = (e) => {
 
 async function postUserToDB(role, name, email, password) {
     var data = {
-        "role" : 0,
+        "role" : role,
         "name": name,
         "email": email,
         "password": password

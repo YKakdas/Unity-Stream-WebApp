@@ -47,6 +47,28 @@ form.onsubmit = (e) => {
 
   if (!eField.classList.contains("error") && !pField.classList.contains("error")) {
     window.location.href = "#"; //# is where you want to submit the form data
+    loginToServer(eInput.value, pInput.value);
     console.log("Form submitted");
+  }
+}
+
+async function loginToServer(email, password) {
+  var data = {
+      "email": email,
+      "password": password
+  }
+
+  const response = await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_updateUserUUIDLogin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow", 
+    referrerPolicy: "no-referrer",
+    body: JSON.stringify(data),
+  });
+  console.log(response.status);
+  if(response.status == "200"){
+    response.json().then(body => document.cookie = "uuid=" + body.uuid +  "; expires=Tue, 5 Sep 2023 12:00:00 UTC; path=/");
   }
 }
