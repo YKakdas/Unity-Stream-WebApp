@@ -30,13 +30,24 @@
   <div class="wrapper">
     <h2>Registration</h2>
     <form action="#">
-      <div class="input-box">
-        <input type="text" placeholder="Enter your name" required>
-      </div>
-      <div class="input-box">
-        <input type="text" placeholder="Enter your email" required>
+      <div class="field name">
+        <div class="input-area">
+          <input type="text" placeholder="Enter your name">
+          <i class="icon fas fa-envelope"></i>
+          <i class="error error-icon fas fa-exclamation-circle"></i>
+        </div>
+        <div class="error error-text">Name can't be blank</div>
       </div>
 
+      <div class="field email">
+        <div class="input-area">
+          <input type="text" placeholder="Enter your email">
+          <i class="icon fas fa-envelope"></i>
+          <i class="error error-icon fas fa-exclamation-circle"></i>
+        </div>
+        <div class="error error-text">Email can't be blank</div>
+      </div>
+     
       <h4>Select Role</h4>
       <div class="custom-select">
         <select name="role" id="role">
@@ -45,22 +56,33 @@
           <option value="2">Streamer - Trainee</option>
         </select>
       </div>
-      <div class="input-box">
-        <input type="password" placeholder="Create password" required>
+      <div class="field create_password">
+        <div class="input-area">
+          <input type="password" placeholder="Create password">
+          <i class="icon fas fa-envelope"></i>
+          <i class="error error-icon fas fa-exclamation-circle"></i>
+        </div>
+        <div class="error error-text">Password can't be blank</div>
       </div>
-      <div class="input-box">
-        <input type="password" placeholder="Confirm password" required>
+
+      <div class="field confirm_password">
+        <div class="input-area">
+          <input type="password" placeholder="Confirm password">
+          <i class="icon fas fa-envelope"></i>
+          <i class="error error-icon fas fa-exclamation-circle"></i>
+        </div>
+        <div class="error error-text">Passwords should match</div>
       </div>
-      <div class="policy">
-        <input type="checkbox">
-        <h3>I accept all terms & conditions</h3>
+      
+      <div class="input-area button">
+        <input type="submit" value="Register">
       </div>
-      <div class="input-box button">
-        <input type="submit" value="Register Now">
-      </div>
+     
       <div class="text">
         <h3>Already have an account? <a href="../login/Login.html">Login Here</a></h3>
       </div>
     </form>
   </div>
+
+  <script src="registration.js"></script>
 </body>
