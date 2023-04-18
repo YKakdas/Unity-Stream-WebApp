@@ -8,10 +8,33 @@
 
   <link rel="stylesheet" href="loginStyle.css" />
   <title>Medical Twitch Login Page</title>
-</head>
 
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+
+    documnet.cookie = "uuid=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+
+  </script>
+</head>
+<!--Navigation bar-->
+<div id="nav-placeholder">
+
+</div>
+
+<script>
+  $(function () {
+    $("#nav-placeholder").load("navLogin.html");
+  });
+
+</script>
+<!--end of Navigation bar-->
 <!-- Nav bar -->
-<nav>
+<!-- <nav>
   <div class="logo">Surgery Streaming</div>
   <input type="checkbox" id="click">
   <label for="click" class="menu-btn">
@@ -24,7 +47,7 @@
     <li><a href="../stream/saved/saved_recordings.html">Recorded Streams</a></li>
     <li><a href="Login.html">Login</a></li>
   </ul>
-</nav>
+</nav> -->
 <!-- end nav bar -->
 
 <body>
