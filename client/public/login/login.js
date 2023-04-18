@@ -31,7 +31,7 @@ form.onsubmit = (e) => {
     if (!eInput.value.match(pattern)) { //if the pattern doesn't match
       eField.classList.add("error");
       let errorTxt = eField.querySelector(".error-text");
-      (eInput.value != "") ? errorTxt.innerText = "Enter a valid email address" : errorTxt.innerText = "Email can't be blank";
+      (eInput.value != "") ? errorTxt.innerText = "Enter a valid email address": errorTxt.innerText = "Email can't be blank";
     } else {
       eField.classList.remove("error");
     }
@@ -71,6 +71,7 @@ async function loginToServer(email, password) {
     });
     if (response.status == "200") {
       response.json().then(body => document.cookie = "uuid=" + body.uuid + "; expires=Tue, 5 Sep 2023 12:00:00 UTC; path=/");
+      document.cookie = "LoggedIn=true"
       window.location.href = "http://localhost/index.html";
     } else {
       alert("Something went wrong! Please try again.");

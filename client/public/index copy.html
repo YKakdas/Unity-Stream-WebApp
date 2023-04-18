@@ -1,36 +1,28 @@
 <head>
-
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="icon" href="stream/shared/images/favicon.ico" type="image/x-icon">
   <!-- <link rel="stylesheet" href="stream/shared/css/style.css" /> -->
   <link rel="stylesheet" href="homeStyle.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Makes the Nav bar work -->
-  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-
   <title>Medical Twitch Homepage</title>
 </head>
-<!--Navigation bar-->
-<div id="nav-placeholder">
 
-</div>
-
-<script>
-  if (document.cookie.indexOf("LoggedIn") == -1) {
-    $(function () {
-      $("#nav-placeholder").load("navLogin.html");
-    });
-  } else {
-    $(function () {
-      $("#nav-placeholder").load("navLogout.html");
-    });
-  }
-
-</script>
-<!--end of Navigation bar-->
-
+<nav>
+  <div class="logo">Surgery Streaming</div>
+  <input type="checkbox" id="click">
+  <label for="click" class="menu-btn">
+    <i class="fas fa-bars"></i>
+  </label>
+  <ul>
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="/stream/live/stream.html">Current Stream</a></li>
+    <li><a href="/stream/saved/saved_recordings.html">Recorded Streams</a></li>
+    <li><a id="login-button" href="login/Login.html">Login</a></li>
+  </ul>
+</nav>
+<!-- end nav bar -->
 
 <body>
 
