@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="../../homeStyle.css" />
 
 
+  <!-- Makes the Nav bar work -->
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
   <script>
     function getCookie(name) {
       const value = `; ${document.cookie}`;
@@ -25,11 +29,11 @@
 <script>
   if (document.cookie.indexOf(getCookie("uuid")) !== -1) {
     $(function () {
-      $("#nav-placeholder").load("../..navLogout.html");
+      $("#nav-placeholder").load("../../navLogout.html");
     });
   } else {
     $(function () {
-      $("#nav-placeholder").load("../..navLogin.html");
+      $("#nav-placeholder").load("../../navLogin.html");
     });
   }
 
