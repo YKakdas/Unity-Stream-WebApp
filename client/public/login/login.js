@@ -71,7 +71,6 @@ async function loginToServer(email, password) {
     });
     if (response.status == "200") {
       response.json().then(body => document.cookie = "uuid=" + body.uuid + "; expires=Tue, 5 Sep 2023 12:00:00 UTC; path=/");
-      document.cookie = "LoggedIn=true"
       window.location.href = "http://localhost/index.html";
     } else {
       alert("Something went wrong! Please try again.");
