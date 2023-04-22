@@ -1,4 +1,4 @@
-import { getNotes } from "../../shared/js/annotationmanager.js";
+import { getNotes } from "../../shared/js/live_annotationmanager.js";
 
 setup();
 
