@@ -1,3 +1,4 @@
+import { isPlaying } from "./videoplayer.js";
 
 let addNoteButton;
 let noteContainer;
@@ -159,6 +160,7 @@ function createDeleteButton(deleteButton, noteParagraph, timestamp) {
 
 
 function onAddNoteClicked() {
+    if (!isPlaying) return;
     $.get("http://localhost/stream/shared/annotation_inner.html", function (result) {
         $("#notes").append(result);
         document.getElementById("notes").lastChild.scrollIntoView();

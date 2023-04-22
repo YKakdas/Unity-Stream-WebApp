@@ -90,15 +90,7 @@ async function onDisconnect() {
   videoPlayer.deletePlayer();
   
   showPlayButton();
-  var button = document.getElementById('download');
-  button.hidden = false;
-  button.addEventListener('click', onDownloadButtonClicked);
 }
-
-function onDownloadButtonClicked(){
-  videoPlayer.download();
-}
-
 
 
 /** @type {RTCStatsReport} */
