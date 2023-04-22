@@ -38,7 +38,7 @@ function showStaticUI() {
         const noteParagraph = document.createElement('p');
         const noteTextarea = createTextArea();
 
-        noteTextarea.addEventListener('click', function(){
+        noteTextarea.addEventListener('click', function () {
             var player = videojs('example_video_1');
             player.currentTime(element.timestamp);
             document.getElementById('video-container').scrollIntoView({ behavior: 'smooth' });
@@ -53,24 +53,18 @@ function showStaticUI() {
         noteParagraph.appendChild(noteTextarea);
         innerNoteContainer.appendChild(noteParagraph);
         noteContainer.appendChild(innerNoteContainer);
-      
+
         count++;
     });
 }
 
 function showDynamicUI() {
-    localStorage.clear();
-    addNoteButton = document.getElementById('add-note-button');
+    addNoteButton = document.getElementsByClassName('add-note-button')[0];
     addNoteButton.hidden = false;
 
-    noteContainer = document.getElementById('note-container');
+    noteContainer = document.getElementById('notes');
 
     addNoteButton.addEventListener('click', onAddNoteClicked.bind(this));
-
-    document.getElementById('log').addEventListener('click', function () {
-        console.log(notes);
-    });
-
 }
 function createTextArea() {
     // Create a new text area for the note
@@ -165,32 +159,10 @@ function createDeleteButton(deleteButton, noteParagraph, timestamp) {
 
 
 function onAddNoteClicked() {
-    // Create a new paragraph element to hold the timestamp, note, and buttons
-    const noteParagraph = document.createElement('p');
-    const noteTextarea = createTextArea();
-    const timestamp = getTimestamp();
-
-    noteParagraph.classList.add('note');
-    noteParagraph.id = `note-${timestamp}`;
-    noteParagraph.appendChild(createTimestampField(timestamp));
-    noteParagraph.appendChild(noteTextarea);
-
-    // Create the save, edit, and delete buttons
-    const saveButton = document.createElement('button');
-    const editButton = document.createElement('button');
-    const deleteButton = document.createElement('button');
-
-    createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, timestamp);
-    createEditButton(noteTextarea, saveButton, editButton);
-    createDeleteButton(deleteButton, noteParagraph, timestamp);
-
-    // Add the buttons to the paragraph element
-    noteParagraph.appendChild(saveButton);
-    noteParagraph.appendChild(editButton);
-    noteParagraph.appendChild(deleteButton);
-
-    // Add the paragraph element to the note container
-    noteContainer.appendChild(noteParagraph);
+    $.get("http://localhost/stream/shared/annotation_inner.html", function (result) {
+        $("#notes").append(result);
+        document.getElementById("notes").lastChild.scrollIntoView();
+    });
 }
 
 
@@ -210,6 +182,6 @@ function updateStoredNotes(note, push) {
     localStorage.setItem('notes', jsonNotes);
 }
 
-export function getNotes(){
+export function getNotes() {
     return notes;
 }

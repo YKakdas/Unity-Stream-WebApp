@@ -1,20 +1,7 @@
-h1 {
-  border-bottom: 1px solid #ccc;
-  font-weight: 500;
-  margin: 0 0 0.8em 0;
-  padding: 0 0 0.2em 0;
-}
-
-h4 {
-  margin: 0;
-  padding: 0 0 0.2em 0;
-}
-
 body {
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   margin: 0;
-  padding: 1em;
   word-break: break-word;
 }
 
@@ -32,7 +19,6 @@ section:last-child {
 
 div#container {
   margin: 0 auto 0 auto;
-  padding: 1em 1.5em 1.3em 1.5em;
 }
 
 code {
@@ -93,6 +79,7 @@ div#message {
     margin: 0 0 20px 0;
     padding: 0.2em 1em;
   }
+
   h1 {
     font-size: 24px;
   }
@@ -102,6 +89,7 @@ div#message {
   button:active {
     background-color: darkRed;
   }
+
   h1 {
     font-size: 22px;
   }
@@ -153,44 +141,153 @@ div#message {
   height: 32px;
 }
 
-#note-container {
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
+#notes {
+  width: 55%;
+  margin-left: 21%;
 }
 
-/* Style for the note paragraph */
-.note {
-  margin-bottom: 10px;
+.note-container {
+  width: 90%;
+  margin: auto;
+  margin-top: 40px;
+}
+
+.timestamp {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 20px;
 }
 
-/* Style for the timestamp */
-.note-timestamp {
+.timestamp-button {
+  cursor: default;
+  border: none;
+  width: fit-content;
+  background: black;
+  color: white;
+  border-radius: 40px;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 5px 10px;
+}
+
+.textarea-container {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.textarea {
+  min-height: 112px;
+  border: 1px solid black;
+  width: 100%;
+  padding: 20px;
+  font-family: Roboto, sans-serif;
+  font-size: 16px;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  cursor: pointer;
+  font-size: 16px;
+  color: rgb(28, 29, 31);
+  background: transparent;
+  height: 34px;
+  border: none;
   font-weight: bold;
+}
+
+.save-button {
+  cursor: pointer;
+  font-size: 16px;
+  background: rgb(28, 29, 31);
+  color: rgb(255, 255, 255);
+  height: 34px;
+  padding: 0px 16px;
+  border: none;
+  font-weight: bold;
+}
+
+.divider {
+  position: relative;
+  margin-top: 30px;
+  height: 3px;
+  margin-bottom: 20px;
+  width: 180%;
+}
+
+.div-transparent:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 2px;
+  width: 100%;
+  margin-left: -20%;
+  background-image: linear-gradient(to right, transparent, rgb(53, 4, 23), transparent);
+}
+
+.add-note {
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.add-note-button {
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: 1px solid black;
+  border-radius: 50%;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+}
+
+.notes-header {
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.header-divider {
+  display: flex;
+  flex-direction: row;
+}
+
+.header-divider:before,
+.header-divider:after {
+  content: "";
+  flex: 1 1;
+  border-bottom: 2px solid #000;
+  margin: auto;
+  margin-left: 10px;
   margin-right: 10px;
 }
 
-/* Style for the note textarea and save/edit/delete buttons */
-.note-textarea {
-  flex: 1;
-}
-.note-buttons {
-  margin-left: 10px;
-}
-.note-save {
-  background-color: green;
-  color: white;
-  font-weight: bold;
-}
-.note-edit {
-  background-color: orange;
-  color: white;
-  font-weight: bold;
-}
-.note-delete {
-  background-color: red;
-  color: white;
-  font-weight: bold;
+.notes-title {
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
