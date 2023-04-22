@@ -37,7 +37,7 @@ export class VideoPlayer {
     this.mediaRecorder = new MediaRecorder(this.videoElement.srcObject);
     this.mediaRecorder.ondataavailable = (event) => {
       this.recordedData.push(event.data);
-  }
+    }
 
     document.addEventListener('webkitfullscreenchange', this._onFullscreenChange.bind(this));
     document.addEventListener('fullscreenchange', this._onFullscreenChange.bind(this));
@@ -51,29 +51,15 @@ export class VideoPlayer {
 
 
   _onClickFullscreenButton() {
-    if (!document.fullscreenElement || !document.webkitFullscreenElement) {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      }
-      else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-      } else {
-        if (this.playerElement.style.position == "absolute") {
-          this.playerElement.style.position = "relative";
-        } else {
-          this.playerElement.style.position = "absolute";
-        }
-      }
-    }
+    document.documentElement.requestFullscreen();
   }
 
   _onFullscreenChange() {
-    if (document.webkitFullscreenElement || document.fullscreenElement) {
-      this.playerElement.style.position = "absolute";
+    if (document.fullscreenElement) {
+      this.videoElement.style.position = "absolute";
       this.fullScreenButtonElement.style.display = 'none';
-      }
-    else {
-      this.playerElement.style.position = "relative";
+    } else {
+      this.videoElement.style.position = "unset";
       this.fullScreenButtonElement.style.display = 'block';
     }
   }

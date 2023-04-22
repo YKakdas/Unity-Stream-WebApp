@@ -32,7 +32,6 @@ section:last-child {
 
 div#container {
   margin: 0 auto 0 auto;
-  max-width: 60em;
   padding: 1em 1.5em 1.3em 1.5em;
 }
 
@@ -64,8 +63,7 @@ p.borderBelow {
 }
 
 video {
-  background: #222;
-  margin: 0 0 20px 0;
+  background: #000;
   --width: 100%;
   width: var(--width);
   height: calc(var(--width) * 0.75);
@@ -116,7 +114,6 @@ div#message {
 }
 
 #player {
-  position: relative;
   top: 0;
   right: 0;
   bottom: 0;
@@ -124,7 +121,9 @@ div#message {
   align-items: center;
   justify-content: center;
   display: flex;
-  background-color: #323232;
+  background-color: #000;
+  height: 600px;
+  width: 100%;
 }
 
 #player:before {
@@ -140,7 +139,6 @@ div#message {
 }
 
 #Video {
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -149,8 +147,8 @@ div#message {
 
 #fullscreenButton {
   position: absolute;
-  top: 25px;
-  right: 25px;
+  top: 140px;
+  right: 60px;
   width: 32px;
   height: 32px;
 }
