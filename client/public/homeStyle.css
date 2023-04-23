@@ -27,6 +27,7 @@ nav ul {
 
 nav ul li {
     margin: 0 5px;
+    cursor: pointer;
 }
 
 nav ul li a {
@@ -95,6 +96,6 @@ nav .menu-btn i {
     nav ul li a:hover,
     nav ul li .active {
         color: cyan;
-        background: none;
+        background: none; 
     }
 }
