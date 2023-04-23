@@ -4,158 +4,15 @@ let addNoteButton;
 let noteContainer;
 let notes = [];
 
-createAnnotationUI();
+setup();
 
 
-function createAnnotationUI() {
-    var path = location.pathname;
-    switch (true) {
-        case path.includes('live'):
-            showDynamicUI();
-            break;
-        case path.includes('saved'):
-            showStaticUI();
-            break;
-    }
-}
-
-function showStaticUI() {
-    noteContainer = document.getElementById('note-container');
-    notes = JSON.parse(localStorage.getItem("notes"));
-
-    notes.sort(function (a, b) {
-        var value1 = a.timestamp;
-        var value2 = b.timestamp;
-        if (value1 < value2) return -1;
-        if (value1 > value2) return 1;
-        return 0;
-    });
-
-    var count = 0;
-    notes.forEach(element => {
-        const innerNoteContainer = document.createElement("div");
-        innerNoteContainer.classList.add("innerNoteContainer");
-
-        const noteParagraph = document.createElement('p');
-        const noteTextarea = createTextArea();
-
-        noteTextarea.addEventListener('click', function () {
-            var player = videojs('example_video_1');
-            player.currentTime(element.timestamp);
-            document.getElementById('video-container').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        noteParagraph.classList.add('note');
-        noteParagraph.id = `note-${count}`;
-        noteParagraph.appendChild(createTimestampField(element.timestamp));
-
-        noteTextarea.readOnly = true;
-        noteTextarea.textContent = element.note;
-        noteParagraph.appendChild(noteTextarea);
-        innerNoteContainer.appendChild(noteParagraph);
-        noteContainer.appendChild(innerNoteContainer);
-
-        count++;
-    });
-}
-
-function showDynamicUI() {
+function setup() {
     addNoteButton = document.getElementsByClassName('add-note-button')[0];
     addNoteButton.hidden = false;
 
     noteContainer = document.getElementById('notes');
-
     addNoteButton.addEventListener('click', onAddNoteClicked.bind(this));
-}
-function createTextArea() {
-    // Create a new text area for the note
-    var noteTextArea = document.createElement('textarea');
-    noteTextArea.placeholder = 'Enter your note here';
-    noteTextArea.classList.add('note-textarea');
-    return noteTextArea;
-}
-
-function getTimestamp() {
-    // Get the current video timestamp
-    var timestamp = document.querySelector('video').currentTime;
-    return timestamp;
-}
-
-function createTimestampField(timestamp) {
-    // Create a new text node for the timestamp
-    const timestampText = document.createTextNode(`[${formatTime(timestamp)}] `);
-    const timestampSpan = document.createElement('span');
-    timestampSpan.classList.add('note-timestamp');
-    timestampSpan.appendChild(timestampText);
-    return timestampSpan;
-}
-
-function createSaveButton(noteTextarea, saveButton, editButton, noteParagraph, timestamp) {
-    saveButton.textContent = 'Save';
-    saveButton.classList.add('note-buttons', 'note-save');
-
-    // Add event listeners to the button
-    saveButton.addEventListener('click', () => {
-
-        // Check if note is empty
-        if (!noteTextarea.value.trim()) {
-            const confirmDelete = confirm('You haven\'t entered anything for this note. Do you want to delete it?');
-            if (confirmDelete) {
-                noteParagraph.remove();
-                return;
-            }
-            return;
-        }
-
-        // Save the note
-        noteTextarea.readOnly = true;
-        saveButton.style.display = 'none';
-        editButton.style.display = 'inline-block';
-
-        const index = notes.findIndex(n => n.timestamp === timestamp);
-        if (index !== -1) {
-            notes.splice(index, 1);
-        }
-
-        const note = {
-            timestamp: timestamp,
-            note: noteTextarea.value
-        };
-        updateStoredNotes(note, true);
-    });
-
-    return saveButton;
-}
-
-function createEditButton(noteTextarea, saveButton, editButton) {
-    editButton.textContent = 'Edit';
-    editButton.classList.add('note-buttons', 'note-edit');
-
-    // Add event listeners to the button
-    editButton.addEventListener('click', () => {
-        // Edit the note
-        noteTextarea.readOnly = false;
-        editButton.style.display = 'none';
-        saveButton.style.display = 'inline-block';
-    });
-}
-
-function createDeleteButton(deleteButton, noteParagraph, timestamp) {
-    deleteButton.textContent = 'Delete';
-    deleteButton.classList.add('note-buttons', 'note-delete');
-
-    // Add event listeners to the button
-    deleteButton.addEventListener('click', () => {
-        // Delete the note
-        noteParagraph.remove();
-
-        const index = notes.findIndex(n => n.timestamp === timestamp);
-        if (index !== -1) {
-            notes.splice(index, 1);
-        }
-        updateStoredNotes(null, false);
-    });
-
 }
 
 
@@ -163,10 +20,72 @@ function onAddNoteClicked() {
     if (!isPlaying) return;
     $.get("http://localhost/stream/shared/annotation_inner.html", function (result) {
         $("#notes").append(result);
+
+        var noteRoot = document.getElementById("notes").lastChild;
+        registerEvents(noteRoot, getTimeStamp());
         document.getElementById("notes").lastChild.scrollIntoView();
     });
 }
 
+function registerEvents(noteRoot, timestamp) {
+    var cancelButton = noteRoot.getElementsByClassName("cancel-button")[0];
+    var saveButton = noteRoot.getElementsByClassName("save-button")[0];
+    var timestampField = noteRoot.getElementsByClassName("timestamp-button")[0];
+
+    timestampField.innerText = formatTime(timestamp);
+
+    cancelButton.addEventListener('click', () => {
+        noteRoot.remove();
+    });
+
+    saveButton.addEventListener('click', () => {
+        const textarea = noteRoot.getElementsByClassName("textarea")[0];
+        const textareaContainer = noteRoot.getElementsByClassName("textarea-container")[0];
+        const cancelButton = noteRoot.getElementsByClassName("cancel-button")[0];
+        cancelButton.style.display = "flex";
+
+        if (!textarea.value.trim()) {
+            const confirmDelete = confirm('You haven\'t entered anything for this note. Do you want to delete it?');
+            if (confirmDelete) {
+                noteRoot.remove();
+            }
+            return;
+        }
+        const actionButtons = noteRoot.getElementsByClassName("action-buttons")[0];
+        actionButtons.style.display = 'none';
+
+        const updateButtons = noteRoot.getElementsByClassName("update-buttons")[0];
+        updateButtons.style.display = 'flex';
+
+        textarea.classList.add("textarea-saved");
+        textarea.classList.remove("textarea");
+        textarea.readOnly = true;
+
+        makeButtonsFollowResizing(textarea, textareaContainer, updateButtons);
+
+        const deleteButton = noteRoot.getElementsByClassName("delete-button")[0];
+        deleteButton.addEventListener("click", () => {
+            noteRoot.remove();
+        });
+
+        const editButton = noteRoot.getElementsByClassName("edit-button")[0];
+        editButton.addEventListener("click", () => {
+            textarea.classList.add("textarea");
+            textarea.classList.remove("textarea-saved");
+
+            updateButtons.style.display = 'none';
+            actionButtons.style.display = 'flex';
+            cancelButton.style.display = "none";
+
+            textarea.readOnly = false;
+        });
+    });
+}
+
+function getTimeStamp() {
+    var timestamp = document.querySelector('video').currentTime;
+    return timestamp;
+}
 
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
@@ -174,16 +93,19 @@ function formatTime(time) {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-function updateStoredNotes(note, push) {
-    if (push) {
-        notes.push(note);
+function makeButtonsFollowResizing(textarea, textareaContainer, updateButtons) {
+    function updateButtonPosition() {
+        const textareaRect = textarea.getBoundingClientRect();
+        const wrapperRect = textareaContainer.getBoundingClientRect();
+
+        const buttonTop = textareaRect.top - wrapperRect.top + 15;
+        const buttonRight = wrapperRect.right - textareaRect.right + 35;
+
+        updateButtons.style.top = buttonTop + 'px';
+        updateButtons.style.right = buttonRight + 'px';
     }
 
-    //TODO should be handled with database, temporary solution to keep notes for testing purposes till db is done
-    const jsonNotes = JSON.stringify(notes);
-    localStorage.setItem('notes', jsonNotes);
-}
+    updateButtonPosition();
 
-export function getNotes() {
-    return notes;
+    new ResizeObserver(updateButtonPosition).observe(textarea);
 }

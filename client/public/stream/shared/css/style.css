@@ -181,6 +181,7 @@ div#message {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
 }
 
 .textarea {
@@ -192,11 +193,49 @@ div#message {
   font-size: 16px;
   min-width: 100%;
   max-width: 100%;
+  cursor: text;
+}
+
+.textarea-saved {
+  padding: 1.4rem;
+  background: rgb(247, 249, 250);
+  color: rgb(28, 29, 31);
+  font-size: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  position: relative;
+  min-width: 40%;
+  min-height: 112px;
+}
+
+.update-buttons {
+  display: none;
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  gap: 10px;
+}
+
+.delete-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0px;
+}
+
+.edit-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0px;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
+  gap: 15px;
   -webkit-box-align: center;
   align-items: center;
   -webkit-box-pack: end;
