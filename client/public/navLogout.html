@@ -14,12 +14,10 @@
 </nav>
 
 <script type="text/javascript">
-  window.onload = function () {
-    onLogout = async function () {
+   onLogout = async function () {
       const cookie = getCookie("uuid");
       await logout_web_request(cookie);
     }
-  }
 
   function getCookie(name) {
     const value = `; ${document.cookie}`;
