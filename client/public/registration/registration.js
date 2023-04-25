@@ -122,7 +122,7 @@ async function postUserToDB(role, name, email, password) {
             body: JSON.stringify(data),
         });
         if (response.status == "200") {
-            window.location.href = "http://localhost/login/Login.html";
+            window.location.href = "../login/Login.html";
         } else {
             alert("Something went wrong! Please try again.");
         }
