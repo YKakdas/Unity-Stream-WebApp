@@ -1,8 +1,8 @@
 import { getServerConfig, getRTCConfiguration } from "../../shared/js/config.js";
 import { createDisplayStringArray } from "../../shared/js/stats.js";
 import { VideoPlayer } from "../../shared/js/videoplayer.js";
-import { RenderStreaming } from "../../../module/renderstreaming.js";
-import { Signaling, WebSocketSignaling } from "../../../module/signaling.js";
+import { RenderStreaming } from "../../../src/renderstreaming.js";
+import { Signaling, WebSocketSignaling } from "../../../src/signaling.js";
 
 /** @type {Element} */
 let playButton;
