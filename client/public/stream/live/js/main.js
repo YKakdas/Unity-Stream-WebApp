@@ -16,9 +16,9 @@ const lockMouseCheck = document.getElementById('lockMouseCheck');
 const videoPlayer = new VideoPlayer();
 
 const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get('id');
-console.log(id);
+const videoId = urlParams.get('id');
 
+export { videoId };
 
 setup();
 
@@ -28,12 +28,6 @@ window.document.oncontextmenu = function () {
 
 window.addEventListener('resize', function () {
   videoPlayer.resizeVideo();
-}, true);
-
-window.addEventListener('beforeunload', async () => {
-  if(!renderstreaming)
-    return;
-  await renderstreaming.stop();
 }, true);
 
 async function setup() {
@@ -79,7 +73,7 @@ async function setupRenderStreaming() {
   renderstreaming.onTrackEvent = (data) => videoPlayer.addTrack(data.track);
 
   await renderstreaming.start();
-  await renderstreaming.createConnection(id);
+  await renderstreaming.createConnection(videoId);
 }
 
 function onConnect() {
@@ -93,7 +87,7 @@ async function onDisconnect() {
   await renderstreaming.stop();
   renderstreaming = null;
   videoPlayer.deletePlayer();
-  
+
   showPlayButton();
 }
 
