@@ -15,6 +15,11 @@ const playerDiv = document.getElementById('player');
 const lockMouseCheck = document.getElementById('lockMouseCheck');
 const videoPlayer = new VideoPlayer();
 
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
+console.log(id);
+
+
 setup();
 
 window.document.oncontextmenu = function () {
@@ -74,7 +79,7 @@ async function setupRenderStreaming() {
   renderstreaming.onTrackEvent = (data) => videoPlayer.addTrack(data.track);
 
   await renderstreaming.start();
-  await renderstreaming.createConnection();
+  await renderstreaming.createConnection(id);
 }
 
 function onConnect() {

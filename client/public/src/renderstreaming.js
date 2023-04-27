@@ -91,7 +91,7 @@ export class RenderStreaming {
    * @param {string | null} connectionId
    */
   async createConnection(connectionId) {
-    this._connectionId = connectionId ? connectionId : uuid4();
+    this._connectionId = connectionId + uuid4();
     await this._signaling.createConnection(this._connectionId);
   }
 
