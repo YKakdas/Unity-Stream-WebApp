@@ -41,7 +41,7 @@ export default class WSSignaling {
             handler.onConnect(ws, msg.connectionId);
             break;
           case "disconnect":
-            //handler.onDisconnect(ws, msg.connectionId);
+            handler.onDisconnect(ws, msg.connectionId);
             break;
           case "offer":
             handler.onOffer(ws, msg.data);

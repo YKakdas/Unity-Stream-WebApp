@@ -29,19 +29,19 @@ function add(ws: WebSocket): void {
 }
 
 function remove(ws: WebSocket): void {
-  // const connectionIds = clients.get(ws);
-  // connectionIds.forEach(connectionId => {
-  //   const pair = connectionPair.get(connectionId);
-  //   if (pair) {
-  //     const otherSessionWs = pair[0] == ws ? pair[1] : pair[0];
-  //     if (otherSessionWs) {
-  //       otherSessionWs.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
-  //     }
-  //   }
-  //   connectionPair.delete(connectionId);
-  // });
+  const connectionIds = clients.get(ws);
+  connectionIds.forEach(connectionId => {
+    const pair = connectionPair.get(connectionId);
+    if (pair) {
+      const otherSessionWs = pair[0] == ws ? pair[1] : pair[0];
+      if (otherSessionWs) {
+        otherSessionWs.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
+      }
+    }
+    connectionPair.delete(connectionId);
+  });
 
-  // clients.delete(ws);
+  clients.delete(ws);
 }
 
 function onConnect(ws: WebSocket, connectionId: string): void {
@@ -68,18 +68,18 @@ function onConnect(ws: WebSocket, connectionId: string): void {
 }
 
 function onDisconnect(ws: WebSocket, connectionId: string): void {
-  // const connectionIds = clients.get(ws);
-  // connectionIds.delete(connectionId);
+  const connectionIds = clients.get(ws);
+  connectionIds.delete(connectionId);
 
-  // if (connectionPair.has(connectionId)) {
-  //   const pair = connectionPair.get(connectionId);
-  //   const otherSessionWs = pair[0] == ws ? pair[1] : pair[0];
-  //   if (otherSessionWs) {
-  //     otherSessionWs.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
-  //   }
-  // }
-  // connectionPair.delete(connectionId);
-  // ws.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
+  if (connectionPair.has(connectionId)) {
+    const pair = connectionPair.get(connectionId);
+    const otherSessionWs = pair[0] == ws ? pair[1] : pair[0];
+    if (otherSessionWs) {
+      otherSessionWs.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
+    }
+  }
+  connectionPair.delete(connectionId);
+  ws.send(JSON.stringify({ type: "disconnect", connectionId: connectionId }));
 }
 
 function onOffer(ws: WebSocket, message: any): void {
