@@ -33,7 +33,7 @@ window.addEventListener('resize', function () {
 window.addEventListener('beforeunload', async () => {
   if(!renderstreaming)
     return;
-  await renderstreaming.stop();
+  //await renderstreaming.stop();
 }, true);
 
 async function setup() {
@@ -88,13 +88,13 @@ function onConnect() {
 }
 
 async function onDisconnect() {
-  clearStatsMessage();
+  //clearStatsMessage();
 
-  await renderstreaming.stop();
-  renderstreaming = null;
-  videoPlayer.deletePlayer();
+  //await renderstreaming.stop();
+  //renderstreaming = null;
+  //videoPlayer.deletePlayer();
   
-  showPlayButton();
+  //showPlayButton();
 }
 
 

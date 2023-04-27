@@ -41,14 +41,14 @@ export class RenderStreaming {
   }
 
   async _onDisconnect(e) {
-    const data = e.detail;
-    if (this._connectionId == data.connectionId) {
-      this.onDisconnect(data.connectionId);
-      if (this._peer) {
-        this._peer.close();
-        this._peer = null;
-      }
-    }
+    // const data = e.detail;
+    // if (this._connectionId == data.connectionId) {
+    //   this.onDisconnect(data.connectionId);
+    //   if (this._peer) {
+    //     this._peer.close();
+    //     this._peer = null;
+    //   }
+    // }
   }
 
   async _onOffer(e) {
@@ -96,7 +96,7 @@ export class RenderStreaming {
   }
 
   async deleteConnection() {
-    await this._signaling.deleteConnection(this._connectionId);
+    //await this._signaling.deleteConnection(this._connectionId);
   }
 
   _preparePeerConnection(connectionId, polite) {
@@ -109,7 +109,7 @@ export class RenderStreaming {
     // Create peerConnection with proxy server and set up handlers
     this._peer = new Peer(connectionId, polite, this._config);
     this._peer.addEventListener('disconnect', () => {
-      this.onDisconnect(`Receive disconnect message from peer. connectionId:${connectionId}`);
+     // this.onDisconnect(`Receive disconnect message from peer. connectionId:${connectionId}`);
     });
     this._peer.addEventListener('trackevent', (e) => {
       const data = e.detail;
@@ -187,14 +187,14 @@ export class RenderStreaming {
   }
 
   async stop() {
-    if (this._peer) {
-      this._peer.close();
-      this._peer = null;
-    }
+    // if (this._peer) {
+    //   this._peer.close();
+    //   this._peer = null;
+    // }
 
-    if (this._signaling) {
-      await this._signaling.stop();
-      this._signaling = null;
-    }
+    // if (this._signaling) {
+    //   await this._signaling.stop();
+    //   this._signaling = null;
+    // }
   }
 }

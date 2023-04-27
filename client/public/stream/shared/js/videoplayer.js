@@ -28,6 +28,7 @@ export class VideoPlayer {
     this.videoElement.playsInline = true;
     this.videoElement.srcObject = new MediaStream();
     this.videoElement.addEventListener('loadedmetadata', this._onLoadedVideo.bind(this), true);
+    this.videoElement.muted = true;
     this.playerElement.appendChild(this.videoElement);
 
     // add fullscreen button

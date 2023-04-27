@@ -63,7 +63,7 @@ export class Signaling extends EventTarget {
           case "connect":
             break;
           case "disconnect":
-            this.dispatchEvent(new CustomEvent('disconnect', { detail: msg }));
+           // this.dispatchEvent(new CustomEvent('disconnect', { detail: msg }));
             break;
           case "offer":
             this.dispatchEvent(new CustomEvent('offer', { detail: msg } ));
@@ -95,8 +95,8 @@ export class Signaling extends EventTarget {
       const deleteConnection = new Set([...currentConnections].filter(e => (!newSet.has(e))));
 
       deleteConnection.forEach(connection => {
-        this.dispatchEvent(new CustomEvent('disconnect', { detail: { connectionId: connection } }));
-        currentConnections.delete(connection);
+       // this.dispatchEvent(new CustomEvent('disconnect', { detail: { connectionId: connection } }));
+       // currentConnections.delete(connection);
       });
 
       newSet.forEach(e => currentConnections.add(e));
@@ -169,9 +169,9 @@ export class Signaling extends EventTarget {
   }
 
   async stop() {
-    this.running = false;
-    await fetch(this.url(''), { method: 'DELETE', headers: this.headers() });
-    this.sessionId = null;
+    // this.running = false;
+    // await fetch(this.url(''), { method: 'DELETE', headers: this.headers() });
+    // this.sessionId = null;
   }
 
   async createConnection(connectionId) {
@@ -185,11 +185,11 @@ export class Signaling extends EventTarget {
   }
 
   async deleteConnection(connectionId) {
-    const data = { 'connectionId': connectionId };
-    const res = await fetch(this.url('connection'), { method: 'DELETE', headers: this.headers(), body: JSON.stringify(data) });
-    const json = await res.json();
-    this.dispatchEvent(new CustomEvent('disconnect', { detail: json }));
-    return json;
+    //const data = { 'connectionId': connectionId };
+    //const res = await fetch(this.url('connection'), { method: 'DELETE', headers: this.headers(), body: JSON.stringify(data) });
+    //const json = await res.json();
+    //this.dispatchEvent(new CustomEvent('disconnect', { detail: json }));
+    //return json;
   }
 
   async sendOffer(connectionId, sdp) {
@@ -273,7 +273,7 @@ export class WebSocketSignaling extends EventTarget {
           this.dispatchEvent(new CustomEvent('connect', { detail: msg }));
           break;
         case "disconnect":
-          this.dispatchEvent(new CustomEvent('disconnect', { detail: msg }));
+          //this.dispatchEvent(new CustomEvent('disconnect', { detail: msg }));
           break;
         case "offer":
           this.dispatchEvent(new CustomEvent('offer', { detail: { connectionId: msg.from, sdp: msg.data.sdp, polite: msg.data.polite } }));
@@ -301,10 +301,10 @@ export class WebSocketSignaling extends EventTarget {
   }
 
   async stop() {
-    this.websocket.close();
-    while (this.isWsOpen) {
-      await this.sleep(100);
-    }
+    // this.websocket.close();
+    // while (this.isWsOpen) {
+    //   await this.sleep(100);
+    // }
   }
 
   createConnection(connectionId) {
@@ -314,9 +314,9 @@ export class WebSocketSignaling extends EventTarget {
   }
 
   deleteConnection(connectionId) {
-    const sendJson = JSON.stringify({ type: "disconnect", connectionId: connectionId });
-    Logger.log(sendJson);
-    this.websocket.send(sendJson);
+    //const sendJson = JSON.stringify({ type: "disconnect", connectionId: connectionId });
+    //Logger.log(sendJson);
+    //this.websocket.send(sendJson);
   }
 
   sendOffer(connectionId, sdp) {

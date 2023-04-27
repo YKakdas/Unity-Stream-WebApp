@@ -43,7 +43,7 @@ export default class Peer extends EventTarget {
     this.pc.oniceconnectionstatechange = () => {
       _this.log(`iceConnectionState changed:${_this.pc.iceConnectionState}`);
       if (_this.pc.iceConnectionState === 'disconnected') {
-        this.dispatchEvent(new Event('disconnect'));
+       // this.dispatchEvent(new Event('disconnect'));
       }
     };
 
