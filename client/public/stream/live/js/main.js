@@ -16,9 +16,13 @@ const lockMouseCheck = document.getElementById('lockMouseCheck');
 const videoPlayer = new VideoPlayer();
 
 const urlParams = new URLSearchParams(window.location.search);
-const videoId = urlParams.get('id');
+const videoId = urlParams.get('videoId');
+const starttime = urlParams.get('starttime');
 
-export { videoId };
+console.log(videoId);
+console.log(starttime);
+
+export { videoId, starttime };
 
 setup();
 

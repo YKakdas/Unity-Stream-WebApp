@@ -31,7 +31,7 @@ async function getOnGoingVideos() {
                     // Add an event listener to the list item
                     listItem.addEventListener('click', () => {
                         // When the list item is clicked, load stream.html with the corresponding id
-                        window.location.href = `stream.html?id=${item.videoId}`;
+                        window.location.href = `stream.html?videoId=${item.videoId}&starttime=${item.videoStartTime}`;
                     });
 
                     // Add the list item to the list

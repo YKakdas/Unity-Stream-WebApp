@@ -1,15 +1,24 @@
 import { isPlaying } from "./videoplayer.js";
-import { videoId } from "../../live/js/main.js";
+import { videoId, starttime } from "../../live/js/main.js";
 
 let addNoteButton;
 let noteContainer;
 let notes = [];
+let previousNotes = [];
 
-setup();
 
 
-function setup() {
-    console.log(videoId);
+await setup();
+
+async function setup() {
+    previousNotes = await getPreviousComments();
+
+    previousNotes.sort((a, b) => a.annotationTime - b.annotationTime);
+
+    if (previousNotes.length > 0) {
+        populatePreviousComments();
+    }
+
     window.addEventListener('beforeunload', async () => {
         if (notes.length > 0) {
             const cookie = getCookie("uuid");
@@ -47,25 +56,92 @@ function onAddNoteClicked() {
     $.get("http://localhost/stream/shared/annotation_inner.html", function (result) {
         $("#notes").append(result);
 
+        let lastNote = null;
+        if(notes.length > 0){
+            lastNote = notes[notes.length - 1]; 
+        }
+
+        let timestamp = null;
+        if(lastNote !== null){
+            timestamp = lastNote.annotationTime + (new Date().getTime() - lastNote.actualTime) / 1000;
+        }else{
+            timestamp = getTimeStamp();
+        }
+        console.log(timestamp);
         var noteRoot = document.getElementById("notes").lastChild;
-        registerEvents(noteRoot, getTimeStamp());
+        registerEvents(noteRoot, timestamp, null);
         document.getElementById("notes").lastChild.scrollIntoView();
     });
 }
 
-function registerEvents(noteRoot, timestamp) {
-    var cancelButton = noteRoot.getElementsByClassName("cancel-button")[0];
-    var saveButton = noteRoot.getElementsByClassName("save-button")[0];
+function populatePreviousComments() {
+    previousNotes.forEach(comment => {
+        $.get("http://localhost/stream/shared/annotation_inner.html", function (result) {
+            $("#notes").append(result);
+
+            var noteRoot = document.getElementById("notes").lastChild;
+            registerEvents(noteRoot, comment.annotationTime, comment.content);
+            notes.push({
+                videoId: comment.videoId,
+                annotationTime: comment.annotationTime,
+                content: comment.content,
+                actualTime: comment.actualTime
+            });
+        });
+    });
+}
+
+function registerEvents(noteRoot, timestamp, content) {
+    const actionButtons = noteRoot.getElementsByClassName("action-buttons")[0];
+    const updateButtons = noteRoot.getElementsByClassName("update-buttons")[0];
+
+    const actualTime = new Date().getTime();
+    const textarea = noteRoot.getElementsByClassName("textarea")[0];
+
     var timestampField = noteRoot.getElementsByClassName("timestamp-button")[0];
 
+    if (content !== null) {
+        textarea.value = content;
+        textarea.classList.add("textarea-saved");
+        textarea.classList.remove("textarea");
+        textarea.readOnly = true;
+
+        actionButtons.style.display = 'none';
+        updateButtons.style.display = 'flex';
+    } 
+
     timestampField.innerText = formatTime(timestamp);
+
+    var cancelButton = noteRoot.getElementsByClassName("cancel-button")[0];
+    var saveButton = noteRoot.getElementsByClassName("save-button")[0];
 
     cancelButton.addEventListener('click', () => {
         noteRoot.remove();
     });
 
+    const deleteButton = noteRoot.getElementsByClassName("delete-button")[0];
+    deleteButton.addEventListener("click", () => {
+        noteRoot.remove();
+        const index = notes.findIndex(n => n.annotationTime === timestamp);
+        if (index !== -1) {
+            notes.splice(index, 1);
+        }
+        console.log("After delete: " + JSON.stringify(notes));
+    });
+
+    const editButton = noteRoot.getElementsByClassName("edit-button")[0];
+    editButton.addEventListener("click", () => {
+        textarea.classList.add("textarea");
+        textarea.classList.remove("textarea-saved");
+
+        updateButtons.style.display = 'none';
+        actionButtons.style.display = 'flex';
+        cancelButton.style.display = "none";
+
+        textarea.readOnly = false;
+    });
+
     saveButton.addEventListener('click', () => {
-        const textarea = noteRoot.getElementsByClassName("textarea")[0];
         const textareaContainer = noteRoot.getElementsByClassName("textarea-container")[0];
         const cancelButton = noteRoot.getElementsByClassName("cancel-button")[0];
         cancelButton.style.display = "flex";
@@ -77,10 +153,8 @@ function registerEvents(noteRoot, timestamp) {
             }
             return;
         }
-        const actionButtons = noteRoot.getElementsByClassName("action-buttons")[0];
+        
         actionButtons.style.display = 'none';
-
-        const updateButtons = noteRoot.getElementsByClassName("update-buttons")[0];
         updateButtons.style.display = 'flex';
 
         textarea.classList.add("textarea-saved");
@@ -89,29 +163,8 @@ function registerEvents(noteRoot, timestamp) {
 
         makeButtonsFollowResizing(textarea, textareaContainer, updateButtons);
 
-        const deleteButton = noteRoot.getElementsByClassName("delete-button")[0];
-        deleteButton.addEventListener("click", () => {
-            noteRoot.remove();
-            const index = notes.findIndex(n => n.timestamp === timestamp);
-            if (index !== -1) {
-                notes.splice(index, 1);
-            }
-            console.log("After delete: " + JSON.stringify(notes));
-        });
-
-        const editButton = noteRoot.getElementsByClassName("edit-button")[0];
-        editButton.addEventListener("click", () => {
-            textarea.classList.add("textarea");
-            textarea.classList.remove("textarea-saved");
-
-            updateButtons.style.display = 'none';
-            actionButtons.style.display = 'flex';
-            cancelButton.style.display = "none";
-
-            textarea.readOnly = false;
-        });
-
-        const index = notes.findIndex(n => n.timestamp === timestamp);
+        const index = notes.findIndex(n => n.annotationTime === timestamp);
+        console.log("index " + index);
         if (index !== -1) {
             notes.splice(index, 1);
         }
@@ -119,7 +172,8 @@ function registerEvents(noteRoot, timestamp) {
         const note = {
             videoId: videoId,
             annotationTime: timestamp,
-            content: textarea.value
+            content: textarea.value,
+            actualTime: actualTime
         };
         notes.push(note);
         console.log("After save: " + JSON.stringify(notes));
@@ -132,6 +186,7 @@ function getTimeStamp() {
 }
 
 function formatTime(time) {
+    console.log(time);
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -154,32 +209,31 @@ function makeButtonsFollowResizing(textarea, textareaContainer, updateButtons) {
     new ResizeObserver(updateButtonPosition).observe(textarea);
 }
 
-function pushAnnotationsWebRequest() {
+async function getPreviousComments() {
+    const tempNotes = []
     const cookie = getCookie("uuid");
-    try {
-        data = {
-            comments: JSON.stringify(notes)
-        }
-        console.log("cookie " + cookie);
-        const response = fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postComment", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                'Accept': 'application/json',
-                "uuid": cookie
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(data),
-            keepalive: true
-        });
-        if (response.status == "200") {
-            // Do nothing
-        } else {
-            alert("Something went wrong! Please try again.");
-        }
-    } catch (error) {
-        alert("Something went wrong! Please try again.");
+
+    const data = {
+        videoId: videoId
     }
 
+    console.log("cookie " + cookie);
+    return fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_getCommentsOfUser", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            "uuid": cookie
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data),
+        keepalive: true
+    })
+        .then((response) => response.json())
+        .then((response) => response.comments);
+}
+
+function relativeTimeDif(actualTime) {
+    return (actualTime - starttime) / 1000;
 }
