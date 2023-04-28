@@ -6,11 +6,19 @@ let noteContainer;
 let notes = [];
 let previousNotes = [];
 
-
-
 await setup();
 
+isPlaying.registerListener(async function(val) {
+    if(val == false){
+        await pushComments();
+        alert("The stream has ended. Your comments has been saved to be shown with recorded stream.");
+        window.location.href = "/index.html";
+    }
+  });
+
 async function setup() {
+
+
     previousNotes = await getPreviousComments();
 
     previousNotes.sort((a, b) => a.annotationTime - b.annotationTime);
@@ -19,29 +27,7 @@ async function setup() {
         populatePreviousComments();
     }
 
-    window.addEventListener('beforeunload', async () => {
-        if (notes.length > 0) {
-            const cookie = getCookie("uuid");
-            const data = {
-                comments: notes
-            }
-            console.log("Data : " + JSON.stringify(data));
-            console.log("cookie " + cookie);
-            await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postComment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Accept': 'application/json',
-                    "uuid": cookie
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify(data),
-                keepalive: true
-            });
-        }
-    });
-
+    window.addEventListener('beforeunload', await pushComments());
 
     addNoteButton = document.getElementsByClassName('add-note-button')[0];
     addNoteButton.hidden = false;
@@ -57,14 +43,14 @@ function onAddNoteClicked() {
         $("#notes").append(result);
 
         let lastNote = null;
-        if(notes.length > 0){
-            lastNote = notes[notes.length - 1]; 
+        if (notes.length > 0) {
+            lastNote = notes[notes.length - 1];
         }
 
         let timestamp = null;
-        if(lastNote !== null){
+        if (lastNote !== null) {
             timestamp = lastNote.annotationTime + (new Date().getTime() - lastNote.actualTime) / 1000;
-        }else{
+        } else {
             timestamp = getTimeStamp();
         }
         console.log(timestamp);
@@ -108,7 +94,7 @@ function registerEvents(noteRoot, timestamp, content) {
 
         actionButtons.style.display = 'none';
         updateButtons.style.display = 'flex';
-    } 
+    }
 
     timestampField.innerText = formatTime(timestamp);
 
@@ -153,7 +139,7 @@ function registerEvents(noteRoot, timestamp, content) {
             }
             return;
         }
-        
+
         actionButtons.style.display = 'none';
         updateButtons.style.display = 'flex';
 
@@ -234,6 +220,25 @@ async function getPreviousComments() {
         .then((response) => response.comments);
 }
 
-function relativeTimeDif(actualTime) {
-    return (actualTime - starttime) / 1000;
+async function pushComments() {
+    if (notes.length > 0) {
+        const cookie = getCookie("uuid");
+        const data = {
+            comments: notes
+        }
+        console.log("Data : " + JSON.stringify(data));
+        console.log("cookie " + cookie);
+        await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_postComment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Accept': 'application/json',
+                "uuid": cookie
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data),
+            keepalive: true
+        });
+    }
 }

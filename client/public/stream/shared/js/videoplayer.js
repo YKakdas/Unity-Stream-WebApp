@@ -1,4 +1,17 @@
-let isPlaying = false;
+let isPlaying = {
+  valueInternal: false,
+  valueListener: function(val) {},
+  set value(val) {
+    this.valueInternal = val;
+    this.valueListener(val);
+  },
+  get value() {
+    return this.valueInternal;
+  },
+  registerListener: function(listener) {
+    this.valueListener = listener;
+  }
+}
 
 export { isPlaying };
 
@@ -44,13 +57,13 @@ export class VideoPlayer {
   _onLoadedVideo() {
     this.videoElement.play();
     this.resizeVideo();
-    isPlaying = true;
+    isPlaying.value = true;
     console.log("Joined to stream");
   }
 
   _onStreamEnded() {
     console.log("Stream ended");
-    isPlaying = false;
+    isPlaying.value = false;
   }
 
 

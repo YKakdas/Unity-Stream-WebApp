@@ -11,6 +11,7 @@ let renderstreaming;
 /** @type {boolean} */
 let useWebSocket;
 
+
 const playerDiv = document.getElementById('player');
 const lockMouseCheck = document.getElementById('lockMouseCheck');
 const videoPlayer = new VideoPlayer();
@@ -23,6 +24,7 @@ console.log(videoId);
 console.log(starttime);
 
 export { videoId, starttime };
+
 
 setup();
 
@@ -91,6 +93,7 @@ async function onDisconnect() {
   await renderstreaming.stop();
   renderstreaming = null;
   videoPlayer.deletePlayer();
+  if (this.annotationManager != null) this.annotationManager.notify();
 
   showPlayButton();
 }

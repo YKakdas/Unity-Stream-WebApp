@@ -348,6 +348,7 @@ a.live_url:link, a.live_url:visited {
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  margin-top: 5px;
 }
 
 a.live_url:hover, a.live_url:active {
