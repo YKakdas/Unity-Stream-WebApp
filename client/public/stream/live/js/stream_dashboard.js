@@ -22,20 +22,14 @@ async function getOnGoingVideos() {
             response.json().then(data => {
                 // Create an unordered list
                 const list = document.createElement('ul');
+                list.classList.add("live_stream_list");
 
+                let count = 0;
                 // Loop through the data and create list items
                 data.forEach(item => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = item.videoId;
-
-                    // Add an event listener to the list item
-                    listItem.addEventListener('click', () => {
-                        // When the list item is clicked, load stream.html with the corresponding id
-                        window.location.href = `stream.html?videoId=${item.videoId}&starttime=${item.videoStartTime}`;
-                    });
-
-                    // Add the list item to the list
-                    list.appendChild(listItem);
+                    count++;
+                    const listItem = `<li><a class="live_url" href=stream.html?videoId=${item.videoId}&starttime=${item.videoStartTime}>Live Stream (${count})</a></li>`
+                    list.innerHTML += listItem;
                 });
 
                 // Add the list to the container
