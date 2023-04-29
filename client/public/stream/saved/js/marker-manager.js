@@ -1,12 +1,16 @@
-import { getNotes } from "../../shared/js/live_annotationmanager.js";
-
 setup();
 
 function setup() {
-    var player = videojs('example_video_1');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlParams.get('videoId');
+    const amazonVideoUrl = `https://vrisb-streaming-bucket.s3.us-east-2.amazonaws.com/${videoId}.mp4`
+
+    var player = videojs('Video');
+    player.src(amazonVideoUrl);
 
     const markers = [];
-    const notes = getNotes();
+    const notes = []//getNotes();
 
     var count = 1;
     notes.forEach(element => {

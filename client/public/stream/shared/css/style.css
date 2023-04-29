@@ -340,7 +340,10 @@ div#message {
   margin-top: 40px;
 }
 
-a.live_url:link, a.live_url:visited {
+a.live_url:link,
+a.live_url:visited,
+a.saved_url:link,
+a.saved_url:visited {
   background-color: white;
   color: black;
   border: 2px solid green;
@@ -351,7 +354,10 @@ a.live_url:link, a.live_url:visited {
   margin-top: 5px;
 }
 
-a.live_url:hover, a.live_url:active {
+a.live_url:hover,
+a.live_url:active,
+a.saved_url:hover,
+a.saved_url:active {
   background-color: green;
   color: white;
 }
