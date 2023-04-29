@@ -1,29 +1,72 @@
+const urlParams = new URLSearchParams(window.location.search);
+const videoId = urlParams.get('videoId');
+const amazonVideoUrl = `https://vrisb-streaming-bucket.s3.us-east-2.amazonaws.com/${videoId}.mp4`
+
+let player;
+
 setup();
 
-function setup() {
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoId = urlParams.get('videoId');
-    const amazonVideoUrl = `https://vrisb-streaming-bucket.s3.us-east-2.amazonaws.com/${videoId}.mp4`
-
-    var player = videojs('Video');
+async function setup() {
+    player = videojs('Video');
     player.src(amazonVideoUrl);
 
-    const markers = [];
-    const notes = []//getNotes();
+    await populateNotes();
+}
 
-    var count = 1;
-    notes.forEach(element => {
-        const marker = {
-            time: element.timestamp,
-            text: `note-${count}`,
-            overlayText: 'overlay',
-            class: 'custom-marker'
-        }
-        markers.push(marker);
-        count++;
+async function populateNotes() {
+    const markers = [];
+
+    const videoInfo = await getVideo();
+    const notesJson = await getAllNotes();
+
+    const notes = notesJson;
+    const videoStartTime = videoInfo.videoStartTime;
+
+    notes.sort((a, b) => a.actualTime - b.actualTime);
+
+    var count = 0;
+    notes.forEach(note => {
+        $.get("http://localhost/stream/saved/saved_annotation_inner.html", function (result) {
+            $("#notes").append(result);
+
+            var noteRoot = document.getElementById("notes").lastChild;
+            noteRoot.id = `note-${count}`;
+            count++;
+
+            const textarea = noteRoot.getElementsByClassName("textarea-saved")[0];
+            textarea.readOnly = true;
+            textarea.value = note.content;
+
+            const timestamp = (note.actualTime - videoStartTime) / 1000;
+            const timestampField = noteRoot.getElementsByClassName("timestamp-button")[0];
+
+            timestampField.addEventListener('click', function () {
+                player.currentTime(timestamp);
+                document.getElementById('player').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+
+            timestampField.innerText = formatTime(timestamp);
+
+            const nameArea = noteRoot.getElementsByClassName("name")[0];
+            nameArea.innerText = note.userName;
+
+            const marker = {
+                time: timestamp,
+                text: note.userName,
+                overlayText: 'overlay',
+                class: 'custom-marker'
+            }
+            markers.push(marker);
+        });
     });
 
+    populateMarkers(markers);
+}
+
+function populateMarkers(markers) {
     player.markers({
         markerStyle: {
             'width': '7px',
@@ -56,34 +99,67 @@ function setup() {
         onMarkerClick: function (marker) {
             const index = markers.indexOf(marker);
 
-            const noteElement = document.getElementById(`note-${index}`);
-            const parentDiv = noteElement.parentElement;
-            const textElement = noteElement.getElementsByClassName('note-textarea')[0];
+            const noteContainer = document.getElementById(`note-${index}`);
 
-            noteElement.scrollIntoView({ behavior: 'smooth' });
+            noteContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'center'
+            });
 
-            var timeElapsed = 0;
-            const blink_speed = 600;
-            var interval = setInterval(function () {
-                timeElapsed += blink_speed;
+            noteContainer.classList.add("horizontal-shake");
 
-                parentDiv.style.visibility = (parentDiv.style.visibility == 'hidden' ? '' : 'hidden');
-                parentDiv.style.backgroundColor = "yellow";
-
-                noteElement.style.backgroundColor = "yellow";
-                textElement.style.backgroundColor = "yellow";
-
-                if (timeElapsed > 2000) {
-                    clearInterval(interval);
-                    parentDiv.style.visibility = '';
-                    noteElement.style.backgroundColor = "white";
-                    textElement.style.backgroundColor = "white";
-                }
-            }, blink_speed);
-
+            setTimeout(() => { noteContainer.classList.remove("horizontal-shake"); }, 2000);
         },
         onMarkerReached: function (marker) { },
         markers: markers
     });
+}
 
+async function getAllNotes() {
+    const cookie = getCookie("uuid");
+    const data = {
+        videoId: videoId
+    }
+
+    return await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_getCommentsOfVideo", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            "uuid": cookie
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data),
+        keepalive: true
+    })
+        .then(response => response.json());
+}
+
+async function getVideo() {
+    const cookie = getCookie("uuid");
+    const data = {
+        videoId: videoId
+    }
+
+    return await fetch("http://127.0.0.1:5001/unitystreamingapp/us-central1/web_getVideo", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            "uuid": cookie
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data),
+        keepalive: true
+    })
+        .then(response => response.json());
+}
+
+function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }

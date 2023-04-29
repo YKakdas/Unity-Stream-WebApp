@@ -4,7 +4,7 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-async function getOnGoingVideos() {
+async function getRecordedVideos() {
     const cookie = getCookie("uuid");
     try {
         console.log("cookie " + cookie);
@@ -32,7 +32,7 @@ async function getOnGoingVideos() {
 
                     var startDate = new Date(item.videoStartTime);
                     var endDate = new Date(item.videoFinishTime);
-                    var text = `Recorded stream (${count})  /   ${startDate.toUTCString()} - ${endDate.toUTCString()}`;
+                    var text = `Recorded stream (${count})  /   ${startDate.toLocaleString()} - ${endDate.toLocaleString()}`;
 
                     const listItem = `<li><a class="saved_url" href=saved_recordings.html?videoId=${item.videoId}>${text}</a></li>`
                     list.innerHTML += listItem;
@@ -52,4 +52,4 @@ async function getOnGoingVideos() {
 
 }
 
-await getOnGoingVideos();
+await getRecordedVideos();

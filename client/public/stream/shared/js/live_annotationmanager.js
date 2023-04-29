@@ -53,7 +53,6 @@ function onAddNoteClicked() {
         } else {
             timestamp = getTimeStamp();
         }
-        console.log(timestamp);
         var noteRoot = document.getElementById("notes").lastChild;
         registerEvents(noteRoot, timestamp, null);
         document.getElementById("notes").lastChild.scrollIntoView();
